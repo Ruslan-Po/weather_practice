@@ -8,7 +8,7 @@ class MainViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         delegate = WeatherPresenter(view:self)
-        delegate?.GetWeather()
+        delegate?.getWeatherByCity(city: "Moscow")
     }
 }
 

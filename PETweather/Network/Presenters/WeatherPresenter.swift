@@ -9,12 +9,11 @@ class WeatherPresenter{
     weak var view: WeatherProtocol?
     private var weatherService = WeatherService()
     
-    
     init(view:WeatherProtocol){
         self.view = view
     }
     
-    func GetWeather() {
+    func GetWeatherByLocation() {
         LocationService.shared.getUserLocation { [weak self] results in
             guard let self = self else {return}
             switch results {
@@ -22,6 +21,20 @@ class WeatherPresenter{
                 self.latitude = location.latitude
                 self.longitude = location.longitude
                 self.fetchweather(lat: location.latitude, lon: location.longitude)
+            case .failure(let error):
+                DispatchQueue.main.async {
+                    self.view?.displayError("\(error)")
+                }
+            }
+        }
+    }
+    
+    func getWeatherByCity(city: String){
+        LocationService.shared.getCoordinates(for: city) {[weak self] results in
+            guard let self = self else {return}
+            switch results {
+            case .success(let coordinates):
+                self.fetchweather(lat: coordinates.latitude, lon: coordinates.longitude)
             case .failure(let error):
                 DispatchQueue.main.async {
                     self.view?.displayError("\(error)")
