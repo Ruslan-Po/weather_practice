@@ -48,7 +48,7 @@ class WeatherPresenter{
             DispatchQueue.main.async {
                 switch results {
                     case .success(let weatherModel):
-                    self?.view?.displayWeather(weatherModel)
+                    self?.view?.getWeather(weatherModel)
                 case .failure(let error):
                     self?.view?.displayError("\(error)")
                 }

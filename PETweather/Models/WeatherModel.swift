@@ -22,9 +22,17 @@ struct Coordinates: Decodable {
 
 struct Forecast: Decodable {
     let dt: Int
+    let date: String
     let main: Main
     let weather: [Weather]
-    
+  
+    enum CodingKeys: String, CodingKey {
+        case dt
+        case date = "dt_txt"
+        case main
+        case weather
+    }
+
 }
 
 struct Main: Decodable {
