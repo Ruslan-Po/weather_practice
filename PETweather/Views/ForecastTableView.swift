@@ -1,31 +1,23 @@
 import UIKit
 
-protocol CustomTableViewDelegate: AnyObject {
-    func didTapOnCell(at indexPath: IndexPath)
-}
-
 class ForecastTableView: UIView {
-    
-    weak var delegate: CustomTableViewDelegate?
     
     private let cellIdentifier = "ForecastTableViewCell"
     private var forecastData: [Forecast] = []
     
     private let dateFormatter: DateFormatter = {
-            let formatter = DateFormatter()
-            formatter.dateFormat = "E, d MMM"
-            formatter.locale = Locale(identifier: "ru_RU")
-            return formatter
-        }()
+        let formatter = DateFormatter()
+        formatter.dateFormat = "E, d MMM"
+        //formatter.locale = Locale(identifier: "ru_RU")
+        return formatter
+    }()
     
     lazy var forecastTableView: UITableView = {
         let tableView = UITableView()
-        
+        tableView.rowHeight = UITableView.automaticDimension
         tableView.delegate = self
         tableView.dataSource = self
-        
-        tableView.register(UITableViewCell.self, forCellReuseIdentifier: cellIdentifier)
-        
+        tableView.register(WeatherTableViewCell.self, forCellReuseIdentifier: cellIdentifier)
         tableView.translatesAutoresizingMaskIntoConstraints = false
         return tableView
     }()
@@ -50,12 +42,27 @@ class ForecastTableView: UIView {
     }
     
     public func setData(_ newData: WeatherModel){
+        var addedDays: Set<String> = []
+        var filteredList: [Forecast] = []
         let calendar = Calendar.current
-        self.forecastData = newData.list.filter { item in
+
+        let today = Date()
+        let todayDay = calendar.component(.day, from: today)
+        let todayMonth = calendar.component(.month, from: today)
+        let todayIdentifier = "\(todayMonth)-\(todayDay)"
+        
+        for item in newData.list.dropFirst() {
             let date = Date(timeIntervalSince1970: TimeInterval(item.dt))
-            let hour = calendar.component(.hour, from: date)
-            return hour == 12
+            let day = calendar.component(.day, from: date)
+            let month = calendar.component(.month, from: date)
+            let dayIdentifier = "\(month)-\(day)"
+            
+            if dayIdentifier != todayIdentifier && !addedDays.contains(dayIdentifier) {
+                filteredList.append(item)
+                addedDays.insert(dayIdentifier)
+            }
         }
+        self.forecastData = filteredList
         forecastTableView.reloadData()
     }
 }
@@ -66,29 +73,15 @@ extension ForecastTableView: UITableViewDelegate, UITableViewDataSource {
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(withIdentifier: cellIdentifier, for: indexPath)
+        guard let cell = tableView.dequeueReusableCell(withIdentifier: cellIdentifier, for: indexPath) as? WeatherTableViewCell else {return UITableViewCell()}
         let item = forecastData[indexPath.row]
         
-        let date = Date(timeIntervalSince1970: TimeInterval(item.dt))
-        let dateString = dateFormatter.string(from: date)
-        
-        var config = cell.defaultContentConfiguration()
-        config.text = "\(dateString) - \(item.main.feelsLike)  \(item.weather[0].description)"
-        cell.contentConfiguration = config
+        cell.cellConfig(item: item , dateFormatter: dateFormatter)
         return cell
     }
     
-    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        
-        delegate?.didTapOnCell(at: indexPath)
-    }
-    
-    func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-        80
-    }
-    
     func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
-        "Суканах"
+        "Forecast"
     }
     
 }

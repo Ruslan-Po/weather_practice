@@ -9,7 +9,7 @@ class WeatherPresenter{
     weak var view: WeatherProtocol?
     private var weatherService = WeatherService()
     
-    init(view:WeatherProtocol){
+    init(view: WeatherProtocol){
         self.view = view
     }
     
@@ -56,3 +56,4 @@ class WeatherPresenter{
         }
     }
 }
+

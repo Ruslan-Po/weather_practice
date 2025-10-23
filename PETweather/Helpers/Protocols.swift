@@ -6,3 +6,4 @@ protocol WeatherProtocol: AnyObject {
     func displayError(_ error: String)
 }
 
+

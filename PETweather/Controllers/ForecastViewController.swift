@@ -7,39 +7,34 @@ class ForecastViewController: UIViewController {
     
     var cityName = ""
     
-    lazy var forecastView: ForecastTableView = {
+    lazy var forecastTableView: ForecastTableView = {
         let view = ForecastTableView()
-        view.delegate = self
         view.translatesAutoresizingMaskIntoConstraints = false
         return view
     }()
     
     override func viewDidLoad() {
-        view.addSubview(forecastView)
+        view.addSubview(forecastTableView)
         view.backgroundColor = .systemGray
-        
         delegate = WeatherPresenter(view: self)
         delegate?.getWeatherByCity(city: cityName)
         
+        
         NSLayoutConstraint.activate([
-            forecastView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 100),
-            forecastView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
-            forecastView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
-            forecastView.bottomAnchor.constraint(equalTo: view.bottomAnchor)
+            forecastTableView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
+            forecastTableView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+            forecastTableView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+            forecastTableView.bottomAnchor.constraint(equalTo: view.bottomAnchor)
             ])
     }
 }
 
-extension ForecastViewController: CustomTableViewDelegate {
-    func didTapOnCell(at indexPath: IndexPath) {
-        print ("\(indexPath)")
-    }
-}
+
 extension ForecastViewController: WeatherProtocol {
     func getWeather(_ weather: WeatherModel) {
-        forecastView.setData(weather)
-        
+        forecastTableView.setData(weather)
     }
+    
     func displayError(_ error: String) {
         print(error)
     }

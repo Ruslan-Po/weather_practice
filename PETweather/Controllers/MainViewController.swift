@@ -2,10 +2,10 @@
 import UIKit
 
 class MainViewController: UIViewController {
-    
+
     private var delegate: WeatherPresenter?
     var cityName: String = "Paris"
-    
+
     lazy var forecastButton: UIButton = {
         let button = UIButton(type: .system)
         button.setTitle("Forecast", for: .normal)
@@ -18,8 +18,7 @@ class MainViewController: UIViewController {
         let vc = ForecastViewController()
         vc.modalPresentationStyle = .fullScreen
         vc.cityName = self.cityName
-        vc.navigationController?.pushViewController(vc, animated: true)
-        present(vc, animated: true)
+        self.navigationController?.pushViewController(vc, animated: true)
     }
     
     override func viewDidLoad() {
@@ -46,5 +45,5 @@ extension MainViewController: WeatherProtocol{
     func displayError(_ error: String) {
         print (error)
     }
-    
 }
+

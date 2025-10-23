@@ -10,9 +10,7 @@ enum GeocodingError: Error {
     case cityNotFound
 }
 
-
 class LocationService: NSObject, CLLocationManagerDelegate {
-    
     static let shared = LocationService()
     private var locationManager = CLLocationManager()
     private let geocoder = CLGeocoder()

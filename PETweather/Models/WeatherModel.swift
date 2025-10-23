@@ -7,6 +7,7 @@ struct WeatherModel: Decodable {
     let list: [Forecast]
     let city: City
 }
+
 struct City: Decodable {
     let name: String
     let coord: Coordinates
