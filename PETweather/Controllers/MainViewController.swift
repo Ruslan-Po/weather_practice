@@ -4,7 +4,8 @@ import UIKit
 class MainViewController: UIViewController {
 
     private var delegate: WeatherPresenter?
-    var cityName: String = "Paris"
+    var inicialCityName: String?
+    var inicialCoordinates: LocationCoordinates?
 
     lazy var forecastButton: UIButton = {
         let button = UIButton(type: .system)
@@ -17,8 +18,16 @@ class MainViewController: UIViewController {
     @objc func showForecast(){
         let vc = ForecastViewController()
         vc.modalPresentationStyle = .fullScreen
-        vc.cityName = self.cityName
+        vc.cityName = self.inicialCityName ?? " " 
         self.navigationController?.pushViewController(vc, animated: true)
+    }
+    
+    private func getWeatherByInputResponse(){
+        if let cityName = self.inicialCityName{
+            delegate?.fetchWeatherByCity(city: cityName)
+        } else if let coord = self.inicialCoordinates {
+            delegate?.fetchWeatherByCoordinates(lat: coord.latitude, lon: coord.longitude)
+        }
     }
     
     override func viewDidLoad() {
@@ -32,7 +41,8 @@ class MainViewController: UIViewController {
         ])
         
         delegate = WeatherPresenter(view:self)
-        delegate?.getWeatherByCity(city: cityName)
+        getWeatherByInputResponse()
+        //delegate?.getWeatherByCity(city: inicialCityName ?? "")
     }
 }
 
@@ -40,6 +50,7 @@ extension MainViewController: WeatherProtocol{
     func getWeather(_ weather: WeatherModel) {
         print ("\(weather.list[0].main)")
         print ("\(weather.city.name)")
+        inicialCityName = weather.city.name
     }
     
     func displayError(_ error: String) {

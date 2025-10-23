@@ -17,18 +17,16 @@ class ForecastViewController: UIViewController {
         view.addSubview(forecastTableView)
         view.backgroundColor = .systemGray
         delegate = WeatherPresenter(view: self)
-        delegate?.getWeatherByCity(city: cityName)
-        
+        delegate?.fetchWeatherByCity(city: cityName)
         
         NSLayoutConstraint.activate([
-            forecastTableView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
+            forecastTableView.topAnchor.constraint(equalTo: view.topAnchor),
             forecastTableView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
             forecastTableView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
             forecastTableView.bottomAnchor.constraint(equalTo: view.bottomAnchor)
             ])
     }
 }
-
 
 extension ForecastViewController: WeatherProtocol {
     func getWeather(_ weather: WeatherModel) {

@@ -3,11 +3,22 @@ import UIKit
 
 class WeatherTableViewCell: UITableViewCell {
     
+    
+    lazy var bgView: UIView = {
+        let view = UIView()
+        view.backgroundColor = .systemGray6
+        view.layer.cornerRadius = 8
+        view.translatesAutoresizingMaskIntoConstraints = false
+        return view
+    }()
+    
     lazy var temperatureLabel: UILabel = {
         let label = UILabel()
+        label.font = UIFont.systemFont(ofSize: 30, weight: .bold)
         label.translatesAutoresizingMaskIntoConstraints = false
         return label
     }()
+
     
     lazy var dateLabel: UILabel = {
         let label = UILabel()
@@ -30,20 +41,27 @@ class WeatherTableViewCell: UITableViewCell {
     
     
     private func setupUI(){
-        contentView.addSubview(dateLabel)
-        contentView.addSubview(temperatureLabel)
-        contentView.addSubview(descriptionLabel)
+        contentView.addSubview(bgView)
+        bgView.addSubview(dateLabel)
+        bgView.addSubview(temperatureLabel)
+        bgView.addSubview(descriptionLabel)
+        
         
         NSLayoutConstraint.activate([
-            dateLabel.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 10),
-            dateLabel.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 10),
+            bgView.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 5),
+            bgView.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -5),
+            bgView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 10),
+            bgView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -10),
+            
+            dateLabel.topAnchor.constraint(equalTo: bgView.topAnchor, constant: 10),
+            dateLabel.leadingAnchor.constraint(equalTo: bgView.leadingAnchor, constant: 10),
             
             descriptionLabel.topAnchor.constraint(equalTo: dateLabel.bottomAnchor, constant: 5),
-            descriptionLabel.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 10),
-            descriptionLabel.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -10),
+            descriptionLabel.leadingAnchor.constraint(equalTo: bgView.leadingAnchor, constant: 10),
+            descriptionLabel.bottomAnchor.constraint(equalTo: bgView.bottomAnchor, constant: -10),
             
-            temperatureLabel.centerYAnchor.constraint(equalTo: contentView.centerYAnchor),
-            temperatureLabel.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -10)
+            temperatureLabel.centerYAnchor.constraint(equalTo: bgView.centerYAnchor),
+            temperatureLabel.trailingAnchor.constraint(equalTo: bgView.trailingAnchor, constant: -20)
         ])
     }
     

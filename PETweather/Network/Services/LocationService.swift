@@ -54,6 +54,7 @@ class LocationService: NSObject, CLLocationManagerDelegate {
                     return
                 }
             }
+            
             guard let placemark = placemark?.first,let location = placemark.location else {
                 DispatchQueue.main.async {
                     complition(.failure(GeocodingError.cityNotFound))

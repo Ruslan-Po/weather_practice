@@ -7,3 +7,8 @@ protocol WeatherProtocol: AnyObject {
 }
 
 
+protocol InputViewControllerDelegate: AnyObject {
+    func didSelectCity(_ city: String)
+    func didSelectCoordinate(_ coordinate: LocationCoordinates)
+}
+
