@@ -7,11 +7,12 @@ class InputViewController: UIViewController{
     var localCityName: String?
     
     private lazy var locationButton: UIButton = {
-            let button = UIButton(type: .system)
-            button.setTitle("Использовать мою локацию", for: .normal)
-            button.addTarget(self, action: #selector(didTapLocationButton), for: .touchUpInside)
+        let button = UIButton()
+        button.setTitle("Использовать мою локацию", for: .normal)
+        button.titleLabel?.textColor = .white
+        button.addTarget(self, action: #selector(didTapLocationButton), for: .touchUpInside)
         button.translatesAutoresizingMaskIntoConstraints = false
-            return button
+        return button
     }()
     
     private lazy var localTextField: UITextField = {
@@ -40,7 +41,7 @@ class InputViewController: UIViewController{
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        
+        view.backgroundColor = .systemBlue
         view.addSubview(locationButton)
         view.addSubview(localTextField)
         

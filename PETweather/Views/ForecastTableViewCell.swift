@@ -1,8 +1,15 @@
 import UIKit
 
 
-class WeatherTableViewCell: UITableViewCell {
+class ForecastTableViewCell: UITableViewCell {
     
+    override init(style: UITableViewCell.CellStyle, reuseIdentifier reuseUdentifier: String?){
+        super.init(style: style, reuseIdentifier: reuseUdentifier)
+        setupUI()
+    }
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
     
     lazy var bgView: UIView = {
         let view = UIView()
@@ -64,19 +71,9 @@ class WeatherTableViewCell: UITableViewCell {
             temperatureLabel.trailingAnchor.constraint(equalTo: bgView.trailingAnchor, constant: -20)
         ])
     }
-    
-    override init(style: UITableViewCell.CellStyle, reuseIdentifier reuseUdentifier: String?){
-        super.init(style: style, reuseIdentifier: reuseUdentifier)
-        setupUI()
-    }
-    required init?(coder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
-    }
-    
+
     public func cellConfig(item: Forecast, dateFormatter: DateFormatter){
         let date = Date(timeIntervalSince1970: TimeInterval(item.dt))
-        //let dateString = dateFormatter.string(from: date)
-        
         dateLabel.text = dateFormatter.string(from: date)
         descriptionLabel.text = item.weather[0].description.capitalized
         temperatureLabel.text = "\(item.main.feelsLike)" + "°C"

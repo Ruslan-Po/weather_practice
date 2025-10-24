@@ -1,7 +1,7 @@
 import CoreLocation
 import Foundation
 
-struct LocationCoordinates {
+struct LocationCoordinates: Codable {
     let latitude: Double
     let longitude: Double
 }

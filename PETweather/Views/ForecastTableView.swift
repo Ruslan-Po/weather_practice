@@ -8,7 +8,6 @@ class ForecastTableView: UIView {
     private let dateFormatter: DateFormatter = {
         let formatter = DateFormatter()
         formatter.dateFormat = "E, d MMM"
-        //formatter.locale = Locale(identifier: "ru_RU")
         return formatter
     }()
     
@@ -17,9 +16,11 @@ class ForecastTableView: UIView {
         tableView.rowHeight = UITableView.automaticDimension
         tableView.separatorStyle = .none
         tableView.allowsSelection = false
+        
         tableView.delegate = self
         tableView.dataSource = self
-        tableView.register(WeatherTableViewCell.self, forCellReuseIdentifier: cellIdentifier)
+        
+        tableView.register(ForecastTableViewCell.self, forCellReuseIdentifier: cellIdentifier)
         tableView.translatesAutoresizingMaskIntoConstraints = false
         return tableView
     }()
@@ -45,26 +46,21 @@ class ForecastTableView: UIView {
     }
     
     public func setData(_ newData: WeatherModel){
-        var addedDays: Set<String> = []
+        var addedDays: Set<Date> = []
         var filteredList: [Forecast] = []
         let calendar = Calendar.current
-
-        let today = Date()
-        let todayDay = calendar.component(.day, from: today)
-        let todayMonth = calendar.component(.month, from: today)
-        let todayIdentifier = "\(todayMonth)-\(todayDay)"
+        
+        let todayStart = calendar.startOfDay(for: Date())
         
         for item in newData.list.dropFirst() {
-            let date = Date(timeIntervalSince1970: TimeInterval(item.dt))
-            let day = calendar.component(.day, from: date)
-            let month = calendar.component(.month, from: date)
-            let dayIdentifier = "\(month)-\(day)"
-            
-            if dayIdentifier != todayIdentifier && !addedDays.contains(dayIdentifier) {
-                filteredList.append(item)
-                addedDays.insert(dayIdentifier)
+                let date = Date(timeIntervalSince1970: TimeInterval(item.dt))
+                let dayStart = calendar.startOfDay(for: date)
+                
+                if dayStart != todayStart && !addedDays.contains(dayStart) {
+                    filteredList.append(item)
+                    addedDays.insert(dayStart)
+                }
             }
-        }
         self.forecastData = filteredList
         forecastTableView.reloadData()
     }
@@ -76,7 +72,7 @@ extension ForecastTableView: UITableViewDelegate, UITableViewDataSource {
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        guard let cell = tableView.dequeueReusableCell(withIdentifier: cellIdentifier, for: indexPath) as? WeatherTableViewCell else {return UITableViewCell()}
+        guard let cell = tableView.dequeueReusableCell(withIdentifier: cellIdentifier, for: indexPath) as? ForecastTableViewCell else {return UITableViewCell()}
         let item = forecastData[indexPath.row]
         
         cell.cellConfig(item: item , dateFormatter: dateFormatter)
@@ -84,7 +80,8 @@ extension ForecastTableView: UITableViewDelegate, UITableViewDataSource {
     }
     
     func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
-        "Forecast"
+        let title = "Forecast"
+        return title
     }
     
 }
