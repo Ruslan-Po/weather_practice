@@ -21,7 +21,7 @@ class ForecastTableViewCell: UITableViewCell {
     
     lazy var temperatureLabel: UILabel = {
         let label = UILabel()
-        label.font = UIFont.systemFont(ofSize: 30, weight: .bold)
+        label.font = UIFont.systemFont(ofSize: 50, weight: .bold)
         label.translatesAutoresizingMaskIntoConstraints = false
         return label
     }()
@@ -76,7 +76,7 @@ class ForecastTableViewCell: UITableViewCell {
         let date = Date(timeIntervalSince1970: TimeInterval(item.dt))
         dateLabel.text = dateFormatter.string(from: date)
         descriptionLabel.text = item.weather[0].description.capitalized
-        temperatureLabel.text = "\(item.main.feelsLike)" + "°C"
+        let temp = item.main.feelsLike
+        temperatureLabel.text =  "\(String(format: "%.1f", temp)) °C"
     }
-    
 }

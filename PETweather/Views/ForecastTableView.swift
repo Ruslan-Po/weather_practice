@@ -19,7 +19,7 @@ class ForecastTableView: UIView {
         
         tableView.delegate = self
         tableView.dataSource = self
-        
+        tableView.rowHeight = 120
         tableView.register(ForecastTableViewCell.self, forCellReuseIdentifier: cellIdentifier)
         tableView.translatesAutoresizingMaskIntoConstraints = false
         return tableView
@@ -74,7 +74,6 @@ extension ForecastTableView: UITableViewDelegate, UITableViewDataSource {
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         guard let cell = tableView.dequeueReusableCell(withIdentifier: cellIdentifier, for: indexPath) as? ForecastTableViewCell else {return UITableViewCell()}
         let item = forecastData[indexPath.row]
-        
         cell.cellConfig(item: item , dateFormatter: dateFormatter)
         return cell
     }
@@ -83,5 +82,6 @@ extension ForecastTableView: UITableViewDelegate, UITableViewDataSource {
         let title = "Forecast"
         return title
     }
+    
     
 }
