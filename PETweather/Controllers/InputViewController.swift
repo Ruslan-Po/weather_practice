@@ -8,16 +8,28 @@ class InputViewController: UIViewController{
     
     private lazy var locationButton: UIButton = {
         let button = UIButton()
-        button.setTitle("Использовать мою локацию", for: .normal)
-        button.titleLabel?.textColor = .white
+        button.setTitle("Use my Location", for: .normal)
+        button.setTitleColor(.white, for: .normal)
+        button.layer.cornerRadius = 8
+        button.layer.borderWidth = 1
+        button.layer.borderColor = UIColor.white.cgColor
         button.addTarget(self, action: #selector(didTapLocationButton), for: .touchUpInside)
         button.translatesAutoresizingMaskIntoConstraints = false
         return button
     }()
     
+    lazy var OrlabelView: UILabel = {
+       let label = UILabel()
+        label.text  = "OR"
+        label.textColor = .white
+        label.font = UIFont.systemFont(ofSize: 20, weight: .bold)
+        label.translatesAutoresizingMaskIntoConstraints = false
+        return label
+    }()
+    
     private lazy var localTextField: UITextField = {
         let field = UITextField()
-        field.placeholder = "Введите город"
+        field.placeholder = "Enter city"
         field.textAlignment = .center
         field.layer.cornerRadius = 8
         field.backgroundColor = .white
@@ -41,15 +53,22 @@ class InputViewController: UIViewController{
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        view.backgroundColor = .systemBlue
+        view.backgroundColor = .systemGray3
         view.addSubview(locationButton)
         view.addSubview(localTextField)
+        view.addSubview(OrlabelView)
         
         NSLayoutConstraint.activate([
             locationButton.centerXAnchor.constraint(equalTo: view.centerXAnchor),
             locationButton.centerYAnchor.constraint(equalTo: view.centerYAnchor),
+            locationButton.heightAnchor.constraint(equalToConstant: 40),
+            locationButton.widthAnchor.constraint(equalToConstant: 150),
             
-            localTextField.topAnchor.constraint(equalTo: locationButton.bottomAnchor, constant: 10),
+            OrlabelView.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+            OrlabelView.topAnchor.constraint(equalTo: locationButton.bottomAnchor, constant: 15),
+
+            
+            localTextField.topAnchor.constraint(equalTo: OrlabelView.bottomAnchor, constant: 10),
             localTextField.centerXAnchor.constraint(equalTo: view.centerXAnchor),
             localTextField.heightAnchor.constraint(equalToConstant: 30),
             localTextField.widthAnchor.constraint(equalToConstant: 200)
