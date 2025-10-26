@@ -4,6 +4,7 @@ class ForecastTableView: UIView {
     
     private let cellIdentifier = "ForecastTableViewCell"
     private var forecastData: [Forecast] = []
+    var tableTitle: String? = nil
     
     private let dateFormatter: DateFormatter = {
         let formatter = DateFormatter()
@@ -79,7 +80,8 @@ extension ForecastTableView: UITableViewDelegate, UITableViewDataSource {
     }
     
     func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
-        let title = "Forecast"
+        let title = tableTitle
+        
         return title
     }
     

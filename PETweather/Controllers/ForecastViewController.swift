@@ -18,6 +18,7 @@ class ForecastViewController: UIViewController {
         view.backgroundColor = .systemGray
         delegate = WeatherPresenter(view: self)
         delegate?.fetchWeatherByCity(city: cityName)
+        forecastTableView.tableTitle = cityName
         
         NSLayoutConstraint.activate([
             forecastTableView.topAnchor.constraint(equalTo: view.topAnchor),

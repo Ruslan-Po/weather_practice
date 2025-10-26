@@ -2,41 +2,20 @@ import Foundation
 
 
 struct Greetings {
-    enum greetings{
-        case goodMorning
-        case goodAfternoon
-        case goodEvening
-        case goodNight
-    }
-    
-    private func getGreetings(greetings: greetings) -> String {
-        switch greetings {
-        case .goodMorning:
-            return "Good Morning"
-        case .goodAfternoon:
-            return "Good Afternoon"
-        case .goodEvening:
-            return "Good Evening"
-        case .goodNight:
-            return "Good Night"
-        }
-    }
     
     var setGreetingByTime: String {
         let hour = Calendar.current.component(.hour, from: Date())
-        var currentGreetings: greetings
         
         switch hour {
         case 5..<12:
-            currentGreetings = .goodMorning
+            return "Good Morning"
         case 12..<16:
-            currentGreetings = .goodAfternoon
+            return "Good Afternoon"
         case 16..<20:
-            currentGreetings = .goodEvening
+            return "Good Evening"
         default:
-            currentGreetings = .goodNight
+            return "Good Night"
         }
-        return getGreetings(greetings: currentGreetings)
     }
 }
 
@@ -62,6 +41,28 @@ struct DateTimeHelper {
     public func convertToDate (_ complition: DateFormatter,_ date: Int) -> String {
         let formatedDate = Date(timeIntervalSince1970: TimeInterval(date))
         return complition.string(from: formatedDate)
+    }
+}
+
+
+struct ImagesByCodeHelper {
+    func getImageNameByCode (code: Int) -> String {
+        switch code {
+        case 200...232:
+           return "storm"
+        case 300...531:
+            return "rain"
+        case 600...622:
+            return "snow"
+        case 701...781:
+            return "fog"
+        case 800:
+            return "clearsky"
+        case 801...804:
+            return "cloud"
+        default:
+            return "uncknow"
+        }
     }
 }
 

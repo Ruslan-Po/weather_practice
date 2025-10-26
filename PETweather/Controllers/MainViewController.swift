@@ -8,12 +8,15 @@ class MainViewController: UIViewController {
     var inicialCityName: String?
     var inicialCoordinates: LocationCoordinates?
     var currentTime = Date()
-    var greetings = Greetings()
+    let greetings = Greetings()
     let localDatetimeHelper = DateTimeHelper()
+    let imagesByCode = ImagesByCodeHelper()
     
     
     
     //MARK: - UI_Elements
+    
+    
     
     lazy var cityLabel: UILabel = {
         let label = UILabel()
@@ -22,6 +25,14 @@ class MainViewController: UIViewController {
         label.font = UIFont.systemFont(ofSize: 25, weight: .thin)
         label.translatesAutoresizingMaskIntoConstraints = false
         return label
+    }()
+    
+    lazy var weatherImage: UIImageView = {
+        let imageView = UIImageView()
+        imageView.contentMode = .scaleAspectFit
+        imageView.tintColor = .red
+        imageView.translatesAutoresizingMaskIntoConstraints = false
+        return imageView
     }()
     
     lazy var temperatureLabel: UILabel = {
@@ -68,7 +79,10 @@ class MainViewController: UIViewController {
     
     lazy var forecastButton: UIButton = {
         let button = UIButton(type: .system)
-        button.setTitle("Forecast", for: .normal)
+        button.layer.cornerRadius = 8
+        button.backgroundColor = .systemGray2
+        button.setTitle("Forecast".uppercased(), for: .normal)
+        button.tintColor = .white
         button.addTarget(self, action: #selector(showForecast), for: .touchUpInside)
         button.translatesAutoresizingMaskIntoConstraints = false
         return button
@@ -87,7 +101,7 @@ class MainViewController: UIViewController {
     }()
     
     lazy var sunStackView: UIStackView = {
-        let stackView = UIStackView(arrangedSubviews: [sunsetStackView, sunriseStackView])
+        let stackView = UIStackView(arrangedSubviews: [sunriseStackView, sunsetStackView])
         stackView.axis = .horizontal
         stackView.distribution = .fillEqually
         stackView.spacing = 10
@@ -151,6 +165,7 @@ class MainViewController: UIViewController {
     func setupUI(){
         view.addSubview(forecastButton)
         
+        view.addSubview(weatherImage)
         view.addSubview(temperatureLabel)
         
         view.addSubview(dateTimeStackView)
@@ -173,15 +188,17 @@ class MainViewController: UIViewController {
             cityLabel.topAnchor.constraint(equalTo: textField.bottomAnchor, constant: 20),
             cityLabel.centerXAnchor.constraint(equalTo: view.centerXAnchor),
             
+            weatherImage.topAnchor.constraint(equalTo: cityLabel.bottomAnchor, constant: 10),
+            weatherImage.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 20),
+            weatherImage.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -20),
             
             temperatureLabel.centerXAnchor.constraint(equalTo: view.centerXAnchor),
-            temperatureLabel.centerYAnchor.constraint(equalTo: view.centerYAnchor),
+            temperatureLabel.topAnchor.constraint(equalTo: weatherImage.bottomAnchor, constant: 10),
             
             dateTimeStackView.topAnchor.constraint(equalTo: temperatureLabel.bottomAnchor, constant: 15),
             dateTimeStackView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 30),
             dateTimeStackView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -30),
-            
-            
+    
             
             sunStackView.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor, constant: 20),
             sunStackView.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor, constant: -20),
@@ -189,8 +206,8 @@ class MainViewController: UIViewController {
             
             forecastButton.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: -50),
             forecastButton.centerXAnchor.constraint(equalTo: view.centerXAnchor),
-            
-            
+            forecastButton.heightAnchor.constraint(equalToConstant: 40),
+            forecastButton.widthAnchor.constraint(equalToConstant: 150)
         ])
     }
     
@@ -212,14 +229,18 @@ extension MainViewController: WeatherProtocol{
             guard let self = self else { return }
             let temp = weather.list[0].main.temp
             self.temperatureLabel.text = "\(String(format: "%.1f", temp)) °C"
+            
             self.sunsetStackView.timeLabel.text =
             localDatetimeHelper.convertToHours(localDatetimeHelper.hoursFormatter, weather.city.sunset)
             self.sunriseStackView.timeLabel.text =
             localDatetimeHelper.convertToHours(localDatetimeHelper.hoursFormatter, weather.city.sunrise)
+            
+            cityLabel.text = weather.city.name
+            self.inicialCityName = weather.city.name
+            
+            weatherImage.image = UIImage(named: imagesByCode.getImageNameByCode(code: weather.list[0].weather[0].id))
+//print("\(weather.list[0].weather[0].id)")
         }
-        
-        cityLabel.text = weather.city.name
-        self.inicialCityName = weather.city.name
     }
     
     func displayError(_ error: String) {
