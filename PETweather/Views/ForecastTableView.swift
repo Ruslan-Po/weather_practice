@@ -25,7 +25,6 @@ class ForecastTableView: UIView {
         tableView.translatesAutoresizingMaskIntoConstraints = false
         return tableView
     }()
-
     
     override init(frame: CGRect) {
         super.init(frame: frame)
@@ -46,24 +45,9 @@ class ForecastTableView: UIView {
         ])
     }
     
-    public func setData(_ newData: WeatherModel){
-        var addedDays: Set<Date> = []
-        var filteredList: [Forecast] = []
-        let calendar = Calendar.current
-        
-        let todayStart = calendar.startOfDay(for: Date())
-        
-        for item in newData.list.dropFirst() {
-                let date = Date(timeIntervalSince1970: TimeInterval(item.dt))
-                let dayStart = calendar.startOfDay(for: date)
-                
-                if dayStart != todayStart && !addedDays.contains(dayStart) {
-                    filteredList.append(item)
-                    addedDays.insert(dayStart)
-                }
-            }
-        self.forecastData = filteredList
-        forecastTableView.reloadData()
+    public func display(forecasts: [Forecast]) {
+        self.forecastData = forecasts
+        self.forecastTableView.reloadData()
     }
 }
 

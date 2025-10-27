@@ -13,6 +13,24 @@ class ForecastViewController: UIViewController {
         return view
     }()
     
+    private func filter(weatherModel: WeatherModel) -> [Forecast] {
+        var addedDays: Set<Date> = []
+        var filteredList: [Forecast] = []
+        let calendar = Calendar.current
+        let todayStart = calendar.startOfDay(for: Date())
+        
+        for item in weatherModel.list.dropFirst() {
+            let date = Date(timeIntervalSince1970: TimeInterval(item.dt))
+            let dayStart = calendar.startOfDay(for: date)
+            
+            if dayStart != todayStart && !addedDays.contains(dayStart) {
+                filteredList.append(item)
+                addedDays.insert(dayStart)
+            }
+        }
+        return filteredList
+    }
+    
     override func viewDidLoad() {
         view.addSubview(forecastTableView)
         view.backgroundColor = .systemGray
@@ -31,11 +49,13 @@ class ForecastViewController: UIViewController {
             forecastTableView.bottomAnchor.constraint(equalTo: view.bottomAnchor)
             ])
     }
+    
 }
 
 extension ForecastViewController: WeatherProtocol {
     func getWeather(_ weather: WeatherModel) {
-        forecastTableView.setData(weather)
+        let filteredList = self.filter(weatherModel: weather)
+        forecastTableView.display(forecasts: filteredList)
     }
     
     func displayError(_ error: String) {
