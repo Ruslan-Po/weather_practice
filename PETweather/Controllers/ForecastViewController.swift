@@ -5,7 +5,7 @@ class ForecastViewController: UIViewController {
 
     private var delegate: WeatherPresenter?
     
-    var cityName = ""
+    var city: City?
     
     lazy var forecastTableView: ForecastTableView = {
         let view = ForecastTableView()
@@ -17,8 +17,12 @@ class ForecastViewController: UIViewController {
         view.addSubview(forecastTableView)
         view.backgroundColor = .systemGray
         delegate = WeatherPresenter(view: self)
-        delegate?.fetchWeatherByCity(city: cityName)
-        forecastTableView.tableTitle = cityName
+        
+        if let city = self.city {
+            delegate?.fetchWeatherByCoordinates(lat: city.coord.lat, lon: city.coord.lon)
+            forecastTableView.tableTitle = city.name
+        } else { print ("Didn't get city")}
+
         
         NSLayoutConstraint.activate([
             forecastTableView.topAnchor.constraint(equalTo: view.topAnchor),

@@ -6,6 +6,7 @@ class MainViewController: UIViewController {
     //MARK: - Variables
     private var delegate: WeatherPresenter?
     var inicialCityName: String?
+    private var currentCity: City?
     var inicialCoordinates: LocationCoordinates?
     var currentTime = Date()
     let greetings = Greetings()
@@ -83,6 +84,7 @@ class MainViewController: UIViewController {
         button.backgroundColor = .systemGray2
         button.setTitle("Forecast".uppercased(), for: .normal)
         button.tintColor = .white
+        button.isEnabled = false
         button.addTarget(self, action: #selector(showForecast), for: .touchUpInside)
         button.translatesAutoresizingMaskIntoConstraints = false
         return button
@@ -135,7 +137,7 @@ class MainViewController: UIViewController {
     @objc func showForecast(){
         let vc = ForecastViewController()
         vc.modalPresentationStyle = .fullScreen
-        vc.cityName = self.inicialCityName ?? " "
+        vc.city = self.currentCity
         self.navigationController?.pushViewController(vc, animated: true)
     }
     
@@ -237,9 +239,12 @@ extension MainViewController: WeatherProtocol{
             
             cityLabel.text = weather.city.name
             self.inicialCityName = weather.city.name
+            self.currentCity = weather.city
+            
+            self.forecastButton.isEnabled = true
             
             weatherImage.image = UIImage(named: imagesByCode.getImageNameByCode(code: weather.list[0].weather[0].id))
-//print("\(weather.list[0].weather[0].id)")
+
         }
     }
     
