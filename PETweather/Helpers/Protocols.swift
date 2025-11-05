@@ -17,3 +17,8 @@ protocol Coordinator {
     func start()
 }
 
+protocol LocationStorageProtocol {
+    func load() -> LastLocation?
+    func save(_ location: LastLocation)
+}
+

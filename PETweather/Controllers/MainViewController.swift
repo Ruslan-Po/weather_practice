@@ -4,7 +4,7 @@ import UIKit
 class MainViewController: UIViewController {
     
     //MARK: - Variables
-     var presenter: WeatherPresenter?
+    var presenter: WeatherPresenter?
     var inicialCityName: String?
     private var currentCity: City?
     var inicialCoordinates: LocationCoordinates?
@@ -12,8 +12,6 @@ class MainViewController: UIViewController {
 
     
     //MARK: - UI_Elements
-    
-    
     
     lazy var cityLabel: UILabel = {
         let label = UILabel()
@@ -42,7 +40,7 @@ class MainViewController: UIViewController {
     
     lazy var greetingsLabel: UILabel = {
         let label = UILabel()
-        label.text = presenter?.greetingUppercased(for: currentTime)
+        label.text = ""
         label.translatesAutoresizingMaskIntoConstraints = false
         return label
     }()
@@ -137,6 +135,12 @@ class MainViewController: UIViewController {
         self.navigationController?.pushViewController(vc, animated: true)
     }
     
+    private func applyStaticTexts() {
+        greetingsLabel.text = presenter?.greetingUppercased(for: currentTime)
+        timeLabel.text = presenter?.formattedTime(currentTime)
+        dateLabel.text = presenter?.formattedDate(currentTime)
+    }
+    
     @objc func getUserLocation(){
         
         LocationService.shared.getUserLocation { [weak self] results in
@@ -213,6 +217,7 @@ class MainViewController: UIViewController {
         
         presenter?.getWeatherByInputResponse()
         setupUI()
+        applyStaticTexts()
     }
 }
 
