@@ -10,40 +10,20 @@ import UIKit
 class SceneDelegate: UIResponder, UIWindowSceneDelegate {
     
     var window: UIWindow?
+    private var coordinator: Coordinator?
     
-    func scene(_ scene: UIScene, willConnectTo session: UISceneSession, options connectionOptions: UIScene.ConnectionOptions) {
-        guard let scene = (scene as? UIWindowScene) else { return }
-        self.window = UIWindow(windowScene: scene)
+    func scene(_ scene: UIScene,
+                 willConnectTo session: UISceneSession,
+                 options connectionOptions: UIScene.ConnectionOptions) {
+          guard let winScene = (scene as? UIWindowScene) else { return }
+          let window = UIWindow(windowScene: winScene)
 
-        
-        if let location = LocationStorageManager.load() {
-            transitionToMainView(city: location.city, coordinate: location.coordinates)
-        } else {
-            let inputVC = InputViewController()
-            inputVC.delegate = self
-            self.window?.rootViewController = inputVC
-        }
-        self.window?.makeKeyAndVisible()
-    }
-    
-    private func transitionToMainView(city: String? = nil , coordinate: LocationCoordinates? = nil){
-        let mainVC = MainViewController()
-        mainVC.inicialCoordinates = coordinate
-        mainVC.inicialCityName = city
-        let navVC = UINavigationController(rootViewController: mainVC)
-        self.window?.rootViewController = navVC
-    }
-}
+          let storage = LocationStorageAdapter()
 
-extension SceneDelegate: InputViewControllerDelegate {
-    func didSelectCity(_ city: String) {
-        let locationToSave = LastLocation(city: city)
-        LocationStorageManager.save(locationToSave)
-        transitionToMainView(city: city)
-    }
-    func didSelectCoordinate(_ coordinate: LocationCoordinates) {
-        let locationToSave = LastLocation(coordinates: coordinate)
-        LocationStorageManager.save(locationToSave)
-        transitionToMainView(coordinate: coordinate)
-    }
+          let coordinator = AppCoordinator(window: window, storage: storage)
+          self.window = window
+          self.coordinator = coordinator
+
+          coordinator.start()
+      }
 }

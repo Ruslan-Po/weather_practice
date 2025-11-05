@@ -4,16 +4,12 @@ import UIKit
 class MainViewController: UIViewController {
     
     //MARK: - Variables
-    private var delegate: WeatherPresenter?
+     var presenter: WeatherPresenter?
     var inicialCityName: String?
     private var currentCity: City?
     var inicialCoordinates: LocationCoordinates?
     var currentTime = Date()
-    let greetings = Greetings()
-    let localDatetimeHelper = DateTimeHelper()
-    let imagesByCode = ImagesByCodeHelper()
-    
-    
+
     
     //MARK: - UI_Elements
     
@@ -46,7 +42,7 @@ class MainViewController: UIViewController {
     
     lazy var greetingsLabel: UILabel = {
         let label = UILabel()
-        label.text = greetings.setGreetingByTime.uppercased()
+        label.text = presenter?.greetingUppercased(for: currentTime)
         label.translatesAutoresizingMaskIntoConstraints = false
         return label
     }()
@@ -54,7 +50,7 @@ class MainViewController: UIViewController {
     lazy var timeLabel: UILabel = {
         let label = UILabel()
         //label.text = "--:--"
-        label.text = localDatetimeHelper.hoursFormatter.string(from: currentTime)
+        label.text = presenter?.formattedTime(currentTime)
         label.font = UIFont.systemFont(ofSize: 30, weight: .light)
         label.translatesAutoresizingMaskIntoConstraints=false
         return label
@@ -62,7 +58,7 @@ class MainViewController: UIViewController {
     
     lazy var dateLabel: UILabel = {
         let label = UILabel()
-        label.text = localDatetimeHelper.dateFormatter.string(from: currentTime).capitalized
+        label.text = presenter?.formattedDate(currentTime)
         label.font = UIFont.systemFont(ofSize: 20, weight: .light)
         label.translatesAutoresizingMaskIntoConstraints=false
         return label
@@ -147,7 +143,7 @@ class MainViewController: UIViewController {
             guard let self = self else {return}
             switch results {
             case .success(let coords ):
-                self.delegate?.fetchWeatherByCoordinates(lat: coords.latitude, lon: coords.longitude)
+                self.presenter?.fetchWeatherByCoordinates(lat: coords.latitude, lon: coords.longitude)
                 let locationToSave = LastLocation(coordinates: coords)
                 LocationStorageManager.save(locationToSave)
             case .failure(let error):
@@ -155,14 +151,7 @@ class MainViewController: UIViewController {
             }
         }
     }
-    
-    private func getWeatherByInputResponse(){
-        if let cityName = self.inicialCityName{
-            delegate?.fetchWeatherByCity(city: cityName)
-        } else if let coord = self.inicialCoordinates {
-            delegate?.fetchWeatherByCoordinates(lat: coord.latitude, lon: coord.longitude)
-        }
-    }
+
     
     func setupUI(){
         view.addSubview(forecastButton)
@@ -216,8 +205,13 @@ class MainViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = .white
-        delegate = WeatherPresenter(view:self)
-        getWeatherByInputResponse()
+        presenter = WeatherPresenter(view:self,   greetings: Greetings(),
+                                     localDatetimeHelper: DateTimeHelper(),
+                                     imagesByCode: ImagesByCodeHelper())
+        presenter?.inicialCityName = self.inicialCityName
+        presenter?.inicialCoordinates = self.inicialCoordinates
+        
+        presenter?.getWeatherByInputResponse()
         setupUI()
     }
 }
@@ -233,9 +227,9 @@ extension MainViewController: WeatherProtocol{
             self.temperatureLabel.text = "\(String(format: "%.1f", temp)) °C"
             
             self.sunsetStackView.timeLabel.text =
-            localDatetimeHelper.convertToHours(localDatetimeHelper.hoursFormatter, weather.city.sunset)
+            self.presenter?.formattedHours(from: TimeInterval(weather.city.sunset))
             self.sunriseStackView.timeLabel.text =
-            localDatetimeHelper.convertToHours(localDatetimeHelper.hoursFormatter, weather.city.sunrise)
+            self.presenter?.formattedHours(from: TimeInterval(weather.city.sunrise))
             
             cityLabel.text = weather.city.name
             self.inicialCityName = weather.city.name
@@ -243,7 +237,7 @@ extension MainViewController: WeatherProtocol{
             
             self.forecastButton.isEnabled = true
             
-            weatherImage.image = UIImage(named: imagesByCode.getImageNameByCode(code: weather.list[0].weather[0].id))
+            weatherImage.image = UIImage(named: self.presenter?.imageName(forCode: weather.list[0].weather[0].id) ?? "")
 
         }
     }
@@ -258,7 +252,7 @@ extension MainViewController: UITextFieldDelegate {
     func textFieldShouldReturn(_ textField: UITextField) -> Bool {
         print ("respond work")
         if let newCityName = textField.text {
-            delegate?.fetchWeatherByCity(city: newCityName)
+            presenter?.fetchWeatherByCity(city: newCityName)
             let locationToSave = LastLocation(city: newCityName)
             LocationStorageManager.save(locationToSave)
             inicialCityName = newCityName

@@ -66,7 +66,6 @@ class InputViewController: UIViewController{
             
             OrlabelView.centerXAnchor.constraint(equalTo: view.centerXAnchor),
             OrlabelView.topAnchor.constraint(equalTo: locationButton.bottomAnchor, constant: 15),
-
             
             localTextField.topAnchor.constraint(equalTo: OrlabelView.bottomAnchor, constant: 10),
             localTextField.centerXAnchor.constraint(equalTo: view.centerXAnchor),

@@ -20,6 +20,7 @@ class ForecastTableView: UIView {
         
         tableView.delegate = self
         tableView.dataSource = self
+        
         tableView.rowHeight = 120
         tableView.register(ForecastTableViewCell.self, forCellReuseIdentifier: cellIdentifier)
         tableView.translatesAutoresizingMaskIntoConstraints = false
@@ -65,9 +66,6 @@ extension ForecastTableView: UITableViewDelegate, UITableViewDataSource {
     
     func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
         let title = tableTitle
-        
         return title
     }
-    
-    
 }

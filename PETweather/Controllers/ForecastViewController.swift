@@ -3,7 +3,7 @@ import UIKit
 
 class ForecastViewController: UIViewController {
 
-    private var delegate: WeatherPresenter?
+    private var presenter: WeatherPresenter?
     
     var city: City?
     
@@ -13,31 +13,16 @@ class ForecastViewController: UIViewController {
         return view
     }()
     
-    private func filter(weatherModel: WeatherModel) -> [Forecast] {
-        var addedDays: Set<Date> = []
-        var filteredList: [Forecast] = []
-        let calendar = Calendar.current
-        let todayStart = calendar.startOfDay(for: Date())
-        
-        for item in weatherModel.list.dropFirst() {
-            let date = Date(timeIntervalSince1970: TimeInterval(item.dt))
-            let dayStart = calendar.startOfDay(for: date)
-            
-            if dayStart != todayStart && !addedDays.contains(dayStart) {
-                filteredList.append(item)
-                addedDays.insert(dayStart)
-            }
-        }
-        return filteredList
-    }
     
     override func viewDidLoad() {
         view.addSubview(forecastTableView)
         view.backgroundColor = .systemGray
-        delegate = WeatherPresenter(view: self)
+        presenter = WeatherPresenter(view: self,   greetings: Greetings(),
+                                     localDatetimeHelper: DateTimeHelper(),
+                                     imagesByCode: ImagesByCodeHelper())
         
         if let city = self.city {
-            delegate?.fetchWeatherByCoordinates(lat: city.coord.lat, lon: city.coord.lon)
+            presenter?.fetchWeatherByCoordinates(lat: city.coord.lat, lon: city.coord.lon)
             forecastTableView.tableTitle = city.name
         } else { print ("Didn't get city")}
 
@@ -54,7 +39,7 @@ class ForecastViewController: UIViewController {
 
 extension ForecastViewController: WeatherProtocol {
     func getWeather(_ weather: WeatherModel) {
-        let filteredList = self.filter(weatherModel: weather)
+        guard let filteredList = presenter?.filter(weatherModel: weather) else { return }
         forecastTableView.display(forecasts: filteredList)
     }
     

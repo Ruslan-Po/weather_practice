@@ -2,7 +2,6 @@ import Foundation
 
 
 struct Greetings {
-    
     var setGreetingByTime: String {
         let hour = Calendar.current.component(.hour, from: Date())
         
